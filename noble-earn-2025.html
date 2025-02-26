@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOBLE EARN 2025</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            transition: background-color 2s;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 10px;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .dashboard, .withdraw-page, .pending-payment {
+            display: none;
+            text-align: center;
+        }
+
+        .balance-box {
+            background-color: green;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px;
+        }
+
+        .gift-box {
+            font-size: 30px;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        .loading-message {
+            display: none;
+            font-size: 18px;
+            color: blue;
+            margin-top: 10px;
+        }
+
+        /* Custom Alert Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 80%;
+            max-width: 400px;
+            animation: popUp 0.5s ease-in-out;
+        }
+
+        @keyframes popUp {
+            0% { transform: translate(-50%, -60%) scale(0.8); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .modal h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .modal p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        .modal .close-btn {
+            background-color: white;
+            color: black;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Sign-up Page -->
+    <div class="container" id="signup">
+        <h1>START CASHING OUT NOW!</h1>
+        <button class="back-btn" onclick="goBack()">⬅</button>
+        <input type="text" id="name" placeholder="NAME">
+        <input type="text" id="accountNumber" placeholder="ACCOUNT NUMBER">
+        <button class="btn" onclick="delayedAction(goToDashboard, 'loading-signup')">GO TO EARNING</button>
+        <p class="loading-message" id="loading-signup">Loading... Please wait.</p>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <button class="back-btn" onclick="goBack()">⬅</button>
+        <h2 id="greeting"></h2>
+        <p>Make a Deposit to Withdraw Available Balance!!</p>
+        <div class="balance-box">
+            <p>WITHDRAWABLE BALANCE</p>
+            <h1>₦<span id="balance">0</span></h1>
+        </div>
+        <div class="gift-box" id="giftBox" onclick="claimGift()">🎁</div>
+        <button class="btn" onclick="delayedAction(showWithdrawPage, 'loading-dashboard')">WITHDRAW NOW</button>
+        <p class="loading-message" id="loading-dashboard">Loading... Please wait.</p>
+        <p>User ID: <span id="userId"></span></p>
+    </div>
+
+    <!-- Withdrawal Page -->
+    <div class="withdraw-page" id="withdrawPage">
+        <button class="back-btn" onclick="goBack()">⬅</button>
+        <h2>Transfer to Bank Account</h2>
+        <input type="text" id="withdrawAccountNumber" placeholder="ACCOUNT NUMBER">
+        <input type="text" id="withdrawAccountName" placeholder="ACCOUNT NAME">
+        <select id="bank">
+            <option value="">Select Bank</option>
+            <option value="Opay">Opay</option>
+            <option value="Palmpay">Palmpay</option>
+        </select>
+        <input type="number" id="amount" placeholder="Amount">
+        <p>Available Balance: ₦<span id="availableBalance">0</span></p>
+        <button class="btn" onclick="delayedAction(showPendingPayment, 'loading-withdraw')">NEXT</button>
+        <p class="loading-message" id="loading-withdraw">Loading... Please wait.</p>
+    </div>
+
+    <!-- Pending Payment Page -->
+    <div class="pending-payment" id="pendingPayment">
+        <button class="back-btn" onclick="goBack()">⬅</button>
+        <h2>PENDING PAYMENT</h2>
+        <p>KINDLY MAKE A ONE-TIME PAYMENT TO APPROVE AND WITHDRAW INSTANTLY</p>
+        <div class="balance-box">
+            <p><strong>AMOUNT:</strong> ₦1,000</p>
+            <p><strong>ACCOUNT NUMBER:</strong> 8100659511</p>
+            <p><strong>ACCOUNT NAME:</strong> DESTINY JALO</p>
+            <p><strong>BANK NAME:</strong> Palmpay</p>
+        </div>
+        <input type="text" id="senderAccountNumber" placeholder="Sender's Account Number">
+        <button class="btn" onclick="delayedAction(confirmPayment, 'loading-payment')">CONFIRM PAYMENT</button>
+        <p class="loading-message" id="loading-payment">Processing... Please wait.</p>
+    </div>
+
+    <!-- Custom Alert Modal -->
+    <div class="modal" id="customAlert">
+        <h2>Payment Pending ⏳</h2>
+        <p>Dear user, your Activation Deposit of ₦1,000 has not been received.</p>
+        <p><strong>Status:</strong> PENDING...</p>
+        <button class="close-btn" onclick="closeAlert()">OK</button>
+    </div>
+
+    <script>
+        function delayedAction(action, loadingId) {
+            document.getElementById(loadingId).style.display = "block";
+
+            setTimeout(() => {
+                document.getElementById(loadingId).style.display = "none";
+                action();
+            }, 5000);
+        }
+
+        function goToDashboard() {
+            document.getElementById("signup").style.display = "none";
+            document.getElementById("dashboard").style.display = "block";
+        }
+
+        function showWithdrawPage() {
+            document.getElementById("dashboard").style.display = "none";
+            document.getElementById("withdrawPage").style.display = "block";
+        }
+
+        function showPendingPayment() {
+            document.getElementById("withdrawPage").style.display = "none";
+            document.getElementById("pendingPayment").style.display = "block";
+        }
+
+        function confirmPayment() {
+            document.getElementById("customAlert").style.display = "block";
+        }
+
+        function closeAlert() {
+            document.getElementById("customAlert").style.display = "none";
+        }
+
+        function goBack() {
+            location.reload();
+        }
+    </script>
+
+</body>
+</html>
